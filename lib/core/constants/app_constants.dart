@@ -6,7 +6,7 @@ class AppConstants {
   static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
 
   // Deep Link Configuration
-  static const String appScheme = 'loginpro';
+  static const String appScheme = 'apppetadopt';
 
   // Vercel URLs (loaded from .env)
   static String get webBaseUrl => dotenv.env['WEB_BASE_URL'] ?? '';
