@@ -8,6 +8,7 @@ import '../../../pets/presentation/bloc/pets_bloc.dart';
 import '../../../pets/presentation/bloc/pets_event.dart';
 import '../../../pets/presentation/pages/pet_discovery_page.dart';
 import '../../../adoption/presentation/pages/adoption_requests_page.dart';
+import 'shelter_home_page.dart';
 import '../../../../injection_container.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
             const ProfilePage(),
           ]
         : [
-            const Center(child: Text('Inicio Refugio (Próximamente)')),
+            ShelterHomePage(user: widget.user), // Inicio Refugio
             BlocProvider(
               create: (_) =>
                   getIt<PetsBloc>()..add(PetsLoadRequested(widget.user.id)),

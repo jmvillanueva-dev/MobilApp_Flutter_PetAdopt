@@ -60,7 +60,7 @@ class AdoptionRemoteDataSource {
     try {
       final response = await _supabaseClient
           .from('adoption_requests')
-          .select('*, pets(name, primary_photo_url), profiles(*)')
+          .select('*, pets(name, primary_photo_url)')
           .eq('shelter_id', shelterId)
           .order('created_at', ascending: false);
 

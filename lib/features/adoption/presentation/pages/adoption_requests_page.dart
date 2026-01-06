@@ -162,7 +162,6 @@ class _AdoptionViewState extends State<_AdoptionView> {
 
   Widget _buildRequestCard(
       BuildContext context, AdoptionRequestEntity request, bool isShelter) {
-    final colorScheme = Theme.of(context).colorScheme;
     final statusColor = _getStatusColor(request.status);
 
     return Card(
@@ -247,23 +246,19 @@ class _AdoptionViewState extends State<_AdoptionView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  OutlinedButton(
-                    onPressed: () =>
+                  _ActionCircleButton(
+                    icon: Icons.close,
+                    color: Colors.red.shade50,
+                    iconColor: Colors.red,
+                    onTap: () =>
                         _updateStatus(context, request.id, 'rechazada'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                    ),
-                    child: const Text('Rechazar'),
                   ),
                   const SizedBox(width: 12),
-                  ElevatedButton(
-                    onPressed: () =>
-                        _updateStatus(context, request.id, 'aprobada'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text('Aprobar'),
+                  _ActionCircleButton(
+                    icon: Icons.check,
+                    color: Colors.green.shade50,
+                    iconColor: Colors.green,
+                    onTap: () => _updateStatus(context, request.id, 'aprobada'),
                   ),
                 ],
               ),
@@ -320,5 +315,36 @@ class _AdoptionViewState extends State<_AdoptionView> {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
+  }
+}
+
+class _ActionCircleButton extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final Color iconColor;
+  final VoidCallback onTap;
+
+  const _ActionCircleButton({
+    required this.icon,
+    required this.color,
+    required this.iconColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(30),
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: iconColor),
+      ),
+    );
   }
 }
