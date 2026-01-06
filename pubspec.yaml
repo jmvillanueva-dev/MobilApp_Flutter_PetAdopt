@@ -41,9 +41,18 @@ dependencies:
   # Environment Variables
   flutter_dotenv: ^5.2.1
 
+  # para renderizar Markdown (formato de respuestas de Gemini)
+  flutter_markdown: ^0.7.4+1
+
+  # Texto a voz usando TTS del sistema
+  flutter_tts: ^3.8.3
+
   # State Management
   flutter_bloc: ^8.1.6
   equatable: ^2.0.5
+
+  # Para hacer peticiones HTTP a la API
+  http: ^1.4.0
 
   # Dependency Injection
   get_it: ^8.0.2
