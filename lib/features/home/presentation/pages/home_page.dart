@@ -21,6 +21,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  late final PetsBloc _petsBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    // Create PetsBloc only for shelter users
+    if (widget.user.role == 'refugio') {
+      _petsBloc = getIt<PetsBloc>()..add(PetsLoadRequested(widget.user.id));
+    }
+  }
+
+  @override
+  void dispose() {
+    if (widget.user.role == 'refugio') {
+      _petsBloc.close();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +54,15 @@ class _HomePageState extends State<HomePage> {
             const ProfilePage(),
           ]
         : [
-            ShelterHomePage(
-              user: widget.user,
-              onTabChange: (index) => setState(() => _currentIndex = index),
+            BlocProvider.value(
+              value: _petsBloc,
+              child: ShelterHomePage(
+                user: widget.user,
+                onTabChange: (index) => setState(() => _currentIndex = index),
+              ),
             ),
-            BlocProvider(
-              create: (_) =>
-                  getIt<PetsBloc>()..add(PetsLoadRequested(widget.user.id)),
+            BlocProvider.value(
+              value: _petsBloc,
               child: PetsListPage(user: widget.user),
             ),
             const AdoptionRequestsPage(),

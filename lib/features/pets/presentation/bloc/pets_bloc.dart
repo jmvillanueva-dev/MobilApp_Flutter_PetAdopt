@@ -23,11 +23,10 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
   ) async {
     emit(PetsLoading());
 
-    final result = await repository.getPetsByShelter(event.shelterId);
-
-    result.fold(
-      (failure) => emit(PetsError(failure.message)),
-      (pets) => emit(PetsLoaded(pets)),
+    await emit.forEach(
+      repository.watchPetsByShelter(event.shelterId),
+      onData: (pets) => PetsLoaded(pets),
+      onError: (error, stackTrace) => PetsError(error.toString()),
     );
   }
 

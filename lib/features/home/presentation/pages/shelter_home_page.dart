@@ -9,7 +9,6 @@ import '../../../adoption/presentation/bloc/adoption_event.dart';
 import '../../../adoption/presentation/bloc/adoption_state.dart';
 import '../../../adoption/presentation/pages/adoption_requests_page.dart';
 import '../../../auth/domain/entities/user_entity.dart';
-import '../../../pets/presentation/bloc/pets_event.dart';
 
 class ShelterHomePage extends StatefulWidget {
   final UserEntity user;
@@ -28,17 +27,9 @@ class ShelterHomePage extends StatefulWidget {
 class _ShelterHomePageState extends State<ShelterHomePage> {
   @override
   Widget build(BuildContext context) {
-    // Usamos MultiBlocProvider para tener acceso a Mascotas y Solicitudes
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) =>
-              GetIt.I<PetsBloc>()..add(PetsLoadRequested(widget.user.id)),
-        ),
-        BlocProvider(
-          create: (_) => GetIt.I<AdoptionBloc>()..add(LoadShelterRequests()),
-        ),
-      ],
+    // PetsBloc is now provided by HomePage, so we only need AdoptionBloc here
+    return BlocProvider(
+      create: (_) => GetIt.I<AdoptionBloc>()..add(LoadShelterRequests()),
       child: _ShelterDashboard(
         user: widget.user,
         onTabChange: widget.onTabChange,

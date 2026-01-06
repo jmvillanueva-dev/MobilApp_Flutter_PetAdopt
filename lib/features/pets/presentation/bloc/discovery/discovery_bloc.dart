@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
-import '../../../domain/entities/pet_entity.dart'; 
+import '../../../domain/entities/pet_entity.dart';
 import '../../../domain/repositories/pets_repository.dart';
 
 part 'discovery_event.dart';
@@ -21,17 +21,16 @@ class DiscoveryBloc extends Bloc<DiscoveryEvent, DiscoveryState> {
 
     final species = event.species ?? 'todos';
 
-    final result = await repository.getAvailablePets(
-      query: event.query,
-      species: species,
-    );
-
-    result.fold(
-      (failure) => emit(DiscoveryError(failure.message)),
-      (pets) => emit(DiscoveryLoaded(
+    await emit.forEach(
+      repository.watchAvailablePets(
+        query: event.query,
+        species: species,
+      ),
+      onData: (pets) => DiscoveryLoaded(
         pets: pets,
         activeSpeciesFilter: species,
-      )),
+      ),
+      onError: (error, stackTrace) => DiscoveryError(error.toString()),
     );
   }
 }

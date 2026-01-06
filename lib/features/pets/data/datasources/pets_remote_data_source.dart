@@ -289,4 +289,28 @@ class PetsRemoteDataSource {
             .map((json) => PetPhotoModel.fromJson(json as Map<String, dynamic>))
             .toList());
   }
+
+  /// Escucha cambios en tiempo real de mascotas disponibles
+  Stream<List<PetModel>> watchAvailablePets({String? query, String? species}) {
+    return _supabaseClient
+        .from('pets')
+        .stream(primaryKey: ['id'])
+        .eq('status', 'disponible')
+        .asyncMap((_) async {
+          // Re-fetch con filtros aplicados
+          return await getAvailablePets(query: query, species: species);
+        });
+  }
+
+  /// Escucha cambios en tiempo real de las mascotas de un refugio
+  Stream<List<PetModel>> watchPetsByShelter(String shelterId) {
+    return _supabaseClient
+        .from('pets')
+        .stream(primaryKey: ['id'])
+        .eq('shelter_id', shelterId)
+        .asyncMap((_) async {
+          // Re-fetch para mantener el orden
+          return await getPetsByShelter(shelterId);
+        });
+  }
 }

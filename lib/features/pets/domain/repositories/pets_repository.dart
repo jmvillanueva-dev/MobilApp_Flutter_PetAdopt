@@ -44,4 +44,10 @@ abstract class PetsRepository {
 
   /// Escucha cambios en tiempo real de las fotos de una mascota.
   Stream<List<PetPhotoEntity>> watchPetPhotos(String petId);
+
+  /// Escucha cambios en tiempo real de mascotas disponibles
+  Stream<List<PetEntity>> watchAvailablePets({String? query, String? species});
+
+  /// Escucha cambios en tiempo real de las mascotas de un refugio
+  Stream<List<PetEntity>> watchPetsByShelter(String shelterId);
 }

@@ -171,4 +171,18 @@ class PetsRepositoryImpl implements PetsRepository {
         .watchPetPhotos(petId)
         .map((models) => models.map((m) => m.toEntity()).toList());
   }
+
+  @override
+  Stream<List<PetEntity>> watchAvailablePets({String? query, String? species}) {
+    return remoteDataSource
+        .watchAvailablePets(query: query, species: species)
+        .map((models) => models.map((m) => m.toEntity()).toList());
+  }
+
+  @override
+  Stream<List<PetEntity>> watchPetsByShelter(String shelterId) {
+    return remoteDataSource
+        .watchPetsByShelter(shelterId)
+        .map((models) => models.map((m) => m.toEntity()).toList());
+  }
 }
