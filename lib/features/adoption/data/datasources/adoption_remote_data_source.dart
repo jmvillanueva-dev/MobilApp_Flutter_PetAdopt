@@ -42,7 +42,8 @@ class AdoptionRemoteDataSource {
     try {
       final response = await _supabaseClient
           .from('adoption_requests')
-          .select('*, pets(name, primary_photo_url)')
+          .select(
+              '*, pets(name, primary_photo_url), profiles!adoption_requests_adopter_id_fkey(display_name)')
           .eq('adopter_id', adopterId)
           .order('created_at', ascending: false);
 
@@ -60,7 +61,8 @@ class AdoptionRemoteDataSource {
     try {
       final response = await _supabaseClient
           .from('adoption_requests')
-          .select('*, pets(name, primary_photo_url)')
+          .select(
+              '*, pets(name, primary_photo_url), profiles!adoption_requests_adopter_id_fkey(display_name)')
           .eq('shelter_id', shelterId)
           .order('created_at', ascending: false);
 
@@ -82,7 +84,8 @@ class AdoptionRemoteDataSource {
           .from('adoption_requests')
           .update({'status': status})
           .eq('id', requestId)
-          .select()
+          .select(
+              '*, pets(name, primary_photo_url), profiles!adoption_requests_adopter_id_fkey(display_name)')
           .single();
 
       // Si se aprueba, actualizar el estado de la mascota a 'en_proceso' o 'adoptado'

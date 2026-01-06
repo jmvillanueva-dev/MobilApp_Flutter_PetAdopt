@@ -28,10 +28,8 @@ class AdoptionRequestModel extends AdoptionRequestEntity {
       updatedAt: DateTime.parse(json['updated_at']),
       petName: json['pets']?['name'],
       petPhotoUrl: json['pets']?['primary_photo_url'],
-      adopterNamr: json['profiles']
-          ?['full_name'], // Asumiendo join con profiles
-      adopterEmail: json['profiles']
-          ?['email'], // No siempre disponible en profiles público
+      adopterNamr: json['profiles']?['display_name'], // Nombre del adoptante
+      adopterEmail: json['profiles']?['email'],
     );
   }
 
