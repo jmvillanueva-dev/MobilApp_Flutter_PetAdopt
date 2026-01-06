@@ -12,6 +12,7 @@ abstract class AuthRemoteDataSource {
     required String email,
     required String password,
     String? displayName,
+    required String role,
   });
 
   Future<void> sendPasswordResetEmail({
@@ -59,12 +60,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required String password,
     String? displayName,
+    required String role,
   }) async {
     try {
+      final data = {
+        if (displayName != null) 'display_name': displayName,
+        'role': role,
+      };
+      print('DEBUG: SignUp sending data: $data');
+
       final response = await supabaseClient.auth.signUp(
         email: email,
         password: password,
-        data: displayName != null ? {'display_name': displayName} : null,
+        data: data,
       );
 
       if (response.user == null) {
@@ -78,9 +86,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       return UserModel.fromSupabaseUser(response.user!);
-    } on AuthException {
+    } on AuthException catch (e) {
+      print(
+          'DEBUG: AuthException in SignUp: ${e.message}, Code: ${e.statusCode}');
       rethrow;
     } catch (e) {
+      print('DEBUG: Generic Exception in SignUp: $e');
       throw Exception('Error al registrarse: $e');
     }
   }

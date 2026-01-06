@@ -7,6 +7,7 @@ class UserModel extends UserEntity {
     required super.email,
     super.displayName,
     super.photoUrl,
+    super.role,
     super.createdAt,
   });
 
@@ -16,6 +17,7 @@ class UserModel extends UserEntity {
       email: user.email ?? '',
       displayName: user.userMetadata?['display_name'] as String?,
       photoUrl: user.userMetadata?['avatar_url'] as String?,
+      role: user.userMetadata?['role'] as String?,
       createdAt: DateTime.parse(user.createdAt),
     );
   }
@@ -26,6 +28,7 @@ class UserModel extends UserEntity {
       email: email,
       displayName: displayName,
       photoUrl: photoUrl,
+      role: role,
       createdAt: createdAt,
     );
   }

@@ -5,8 +5,8 @@ import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/loading_overlay.dart';
-import 'register_page.dart';
 import 'reset_password_page.dart';
+import 'role_selection_page.dart';
 import 'welcome_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -270,7 +270,7 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => const RegisterPage(),
+                                  builder: (_) => const RoleSelectionPage(),
                                 ),
                               );
                             },

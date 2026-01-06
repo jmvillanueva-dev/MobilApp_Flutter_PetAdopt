@@ -44,6 +44,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
     String? displayName,
+    required String role,
   }) async {
     if (!await networkInfo.isConnected) {
       return const Left(NetworkFailure('Sin conexión a internet'));
@@ -54,6 +55,7 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
         displayName: displayName,
+        role: role,
       );
       return Right(user);
     } on AuthException catch (e) {

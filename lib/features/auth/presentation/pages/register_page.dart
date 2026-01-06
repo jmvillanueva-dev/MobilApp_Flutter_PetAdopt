@@ -9,7 +9,12 @@ import 'email_verification_sent_page.dart';
 import 'welcome_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  final String role;
+
+  const RegisterPage({
+    super.key,
+    required this.role,
+  });
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -38,6 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
               email: _emailController.text.trim(),
               password: _passwordController.text,
               displayName: _nameController.text.trim(),
+              role: widget.role,
             ),
           );
     }
