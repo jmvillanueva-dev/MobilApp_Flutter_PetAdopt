@@ -12,9 +12,9 @@ class AdoptionBloc extends Bloc<AdoptionEvent, AdoptionState> {
   final SupabaseClient supabaseClient;
   final NotificationService notificationService;
 
-  // Track previous requests to detect new ones
-  List<String> _previousAdopterRequestIds = [];
-  List<String> _previousShelterRequestIds = [];
+  // Track previous requests to detect new ones and status changes
+  Set<String> _previousShelterRequestIds = {};
+  Map<String, String> _previousAdopterRequestStatuses = {};
 
   AdoptionBloc(
     this.repository,
@@ -71,20 +71,30 @@ class AdoptionBloc extends Bloc<AdoptionEvent, AdoptionState> {
     await emit.forEach(
       repository.watchRequestsByAdopter(userId),
       onData: (requests) {
-        // Check for status changes and notify
-        for (final request in requests) {
-          final wasTracked = _previousAdopterRequestIds.contains(request.id);
-          if (wasTracked && request.status != 'pendiente') {
-            // Status changed from pending to approved/rejected
+        // Track status changes: Map<requestId, status>
+        final currentRequestStatuses = Map<String, String>.fromEntries(
+          requests.map((r) => MapEntry(r.id, r.status)),
+        );
+
+        // Check for status changes from 'pendiente' to 'aprobada' or 'rechazada'
+        for (final entry in currentRequestStatuses.entries) {
+          final requestId = entry.key;
+          final currentStatus = entry.value;
+          final previousStatus = _previousAdopterRequestStatuses[requestId];
+
+          // Only notify if status changed FROM 'pendiente' TO 'aprobada'/'rechazada'
+          if (previousStatus == 'pendiente' &&
+              (currentStatus == 'aprobada' || currentStatus == 'rechazada')) {
+            final request = requests.firstWhere((r) => r.id == requestId);
             notificationService.showStatusChangeNotification(
-              petName: request.petName ?? 'mascota',
-              status: request.status,
+              petName: request.petName ?? 'Mascota',
+              status: currentStatus,
             );
           }
         }
 
-        // Update tracked IDs
-        _previousAdopterRequestIds = requests.map((r) => r.id).toList();
+        // Update tracking map for next iteration
+        _previousAdopterRequestStatuses = currentRequestStatuses;
 
         return AdoptionLoaded(requests);
       },
@@ -107,20 +117,27 @@ class AdoptionBloc extends Bloc<AdoptionEvent, AdoptionState> {
     await emit.forEach(
       repository.watchRequestsByShelter(userId),
       onData: (requests) {
-        // Check for new requests and notify
-        for (final request in requests) {
-          final isNew = !_previousShelterRequestIds.contains(request.id);
-          if (isNew && request.status == 'pendiente') {
-            // New pending request received
-            notificationService.showNewRequestNotification(
-              petName: request.petName ?? 'mascota',
-              adopterName: request.adopterNamr ?? 'Usuario',
-            );
-          }
+        // Check for NEW pending requests (not seen before)
+        final currentPendingIds = requests
+            .where((r) => r.status == 'pendiente')
+            .map((r) => r.id)
+            .toSet();
+
+        // Find truly new requests (IDs that weren't in previous set)
+        final newRequestIds =
+            currentPendingIds.difference(_previousShelterRequestIds);
+
+        // Notify only for each NEW pending request
+        for (final newRequestId in newRequestIds) {
+          final request = requests.firstWhere((r) => r.id == newRequestId);
+          notificationService.showNewRequestNotification(
+            petName: request.petName ?? 'Mascota',
+            adopterName: request.adopterNamr ?? 'Usuario',
+          );
         }
 
-        // Update tracked IDs
-        _previousShelterRequestIds = requests.map((r) => r.id).toList();
+        // Update the tracking set for next iteration
+        _previousShelterRequestIds = currentPendingIds;
 
         return AdoptionLoaded(requests);
       },
