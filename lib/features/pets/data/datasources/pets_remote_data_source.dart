@@ -31,6 +31,34 @@ class PetsRemoteDataSource {
     }
   }
 
+  /// Obtiene mascotas disponibles para adopción (con filtros opcionales)
+  Future<List<PetModel>> getAvailablePets(
+      {String? query, String? species}) async {
+    try {
+      var builder =
+          _supabaseClient.from('pets').select().eq('status', 'disponible');
+
+      if (query != null && query.isNotEmpty) {
+        // Buscando por nombre insensible a mayúsculas/minúsculas
+        builder = builder.ilike('name', '%$query%');
+      }
+
+      if (species != null &&
+          species.isNotEmpty &&
+          species.toLowerCase() != 'todos') {
+        builder = builder.eq('species', species.toLowerCase());
+      }
+
+      final response = await builder.order('created_at', ascending: false);
+
+      return (response as List)
+          .map((json) => PetModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      throw Exception('Error al buscar mascotas: $e');
+    }
+  }
+
   /// Obtiene una mascota por ID
   Future<PetModel> getPetById(String petId) async {
     try {

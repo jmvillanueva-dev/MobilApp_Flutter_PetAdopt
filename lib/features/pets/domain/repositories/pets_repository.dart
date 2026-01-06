@@ -10,6 +10,10 @@ abstract class PetsRepository {
   /// Obtiene todas las mascotas de un refugio específico.
   Future<Either<Failure, List<PetEntity>>> getPetsByShelter(String shelterId);
 
+  /// Obtiene mascotas disponibles para adopción
+  Future<Either<Failure, List<PetEntity>>> getAvailablePets(
+      {String? query, String? species});
+
   /// Obtiene una mascota por su ID.
   Future<Either<Failure, PetEntity>> getPetById(String petId);
 

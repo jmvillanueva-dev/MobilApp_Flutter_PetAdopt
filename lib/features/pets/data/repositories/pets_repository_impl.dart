@@ -35,6 +35,22 @@ class PetsRepositoryImpl implements PetsRepository {
   }
 
   @override
+  Future<Either<Failure, List<PetEntity>>> getAvailablePets(
+      {String? query, String? species}) async {
+    if (!await networkInfo.isConnected) {
+      return const Left(NetworkFailure('Sin conexión a internet'));
+    }
+
+    try {
+      final pets = await remoteDataSource.getAvailablePets(
+          query: query, species: species);
+      return Right(pets.map((model) => model.toEntity()).toList());
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, PetEntity>> getPetById(String petId) async {
     if (!await networkInfo.isConnected) {
       return const Left(NetworkFailure('Sin conexión a internet'));

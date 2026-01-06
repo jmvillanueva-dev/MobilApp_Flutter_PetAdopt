@@ -6,6 +6,7 @@ import '../../../chat/presentation/pages/chat_page.dart';
 import '../../../pets/presentation/pages/pets_list_page.dart';
 import '../../../pets/presentation/bloc/pets_bloc.dart';
 import '../../../pets/presentation/bloc/pets_event.dart';
+import '../../../pets/presentation/pages/pet_discovery_page.dart';
 import '../../../../injection_container.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     // Define tabs based on role
     final List<Widget> pages = isAdoptante
         ? [
-            const Center(child: Text('Inicio Adoptante (Próximamente)')),
+            const PetDiscoveryPage(),
             const Center(child: Text('Mapa (Próximamente)')),
             const ChatPageProvider(), // Chat IA
             const Center(child: Text('Solicitudes (Próximamente)')),
