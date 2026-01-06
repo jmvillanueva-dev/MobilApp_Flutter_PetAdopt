@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import '../../../adoption/presentation/pages/adoption_requests_page.dart';
 import '../../../auth/domain/entities/user_entity.dart';
-import '../../../chat/presentation/pages/chat_page.dart';
+import '../../../chat/presentation/pages/chat_page.dart'; // Contains ChatPageProvider
 import '../../../map/presentation/pages/shelter_map_page.dart';
 import '../../../pets/presentation/bloc/pets_bloc.dart';
 import '../../../pets/presentation/bloc/pets_event.dart';
@@ -51,7 +50,7 @@ class _HomePageState extends State<HomePage> {
         ? [
             const PetDiscoveryPage(),
             const ShelterMapPage(), // Mapa de refugios
-            const ChatPage(), // Chat IA
+            const ChatPageProvider(), // Chat IA
             const AdoptionRequestsPage(),
             const ProfilePage(),
           ]
