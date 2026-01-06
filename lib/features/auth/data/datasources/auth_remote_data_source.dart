@@ -43,12 +43,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.user == null) {
-        throw Exception('No se pudo iniciar sesión');
+        throw AuthException('No se pudo iniciar sesión');
       }
 
       return UserModel.fromSupabaseUser(response.user!);
-    } on AuthException catch (e) {
-      throw Exception(e.message);
+    } on AuthException {
+      rethrow;
     } catch (e) {
       throw Exception('Error al iniciar sesión: $e');
     }
@@ -68,12 +68,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.user == null) {
-        throw Exception('No se pudo crear la cuenta');
+        throw AuthException('No se pudo crear la cuenta');
       }
 
       return UserModel.fromSupabaseUser(response.user!);
-    } on AuthException catch (e) {
-      throw Exception(e.message);
+    } on AuthException {
+      rethrow;
     } catch (e) {
       throw Exception('Error al registrarse: $e');
     }
@@ -85,8 +85,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     try {
       await supabaseClient.auth.resetPasswordForEmail(email);
-    } on AuthException catch (e) {
-      throw Exception(e.message);
+    } on AuthException {
+      rethrow;
     } catch (e) {
       throw Exception('Error al enviar email de recuperación: $e');
     }
@@ -96,8 +96,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> signOut() async {
     try {
       await supabaseClient.auth.signOut();
-    } on AuthException catch (e) {
-      throw Exception(e.message);
+    } on AuthException {
+      rethrow;
     } catch (e) {
       throw Exception('Error al cerrar sesión: $e');
     }

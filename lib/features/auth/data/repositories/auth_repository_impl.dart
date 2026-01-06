@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/network_info.dart';
 import '../../domain/entities/user_entity.dart';
@@ -31,6 +32,8 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
       );
       return Right(user);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(_mapAuthErrorMessage(e.message)));
     } catch (e) {
       return Left(AuthFailure(e.toString()));
     }
@@ -53,6 +56,8 @@ class AuthRepositoryImpl implements AuthRepository {
         displayName: displayName,
       );
       return Right(user);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(_mapAuthErrorMessage(e.message)));
     } catch (e) {
       return Left(AuthFailure(e.toString()));
     }
@@ -69,6 +74,8 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await remoteDataSource.sendPasswordResetEmail(email: email);
       return const Right(null);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(_mapAuthErrorMessage(e.message)));
     } catch (e) {
       return Left(AuthFailure(e.toString()));
     }
@@ -79,6 +86,8 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await remoteDataSource.signOut();
       return const Right(null);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(_mapAuthErrorMessage(e.message)));
     } catch (e) {
       return Left(AuthFailure(e.toString()));
     }
@@ -97,5 +106,25 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Stream<UserEntity?> get authStateChanges {
     return remoteDataSource.authStateChanges;
+  }
+
+  String _mapAuthErrorMessage(String error) {
+    // Casos comunes de Supabase/GoTrue
+    if (error.contains('Invalid login credentials') ||
+        error.contains('invalid_credentials')) {
+      return 'Credenciales incorrectas. Verifica tu correo y contraseña.';
+    }
+    if (error.contains('Email not confirmed')) {
+      return 'Tu correo no ha sido confirmado. Revisa tu bandeja de entrada.';
+    }
+    if (error.contains('User already registered') ||
+        error.contains('already registered')) {
+      return 'Ya existe una cuenta registrada con este correo.';
+    }
+    if (error.contains('Password should be at least')) {
+      return 'La contraseña es muy corta. Debe tener al menos 6 caracteres.';
+    }
+    // Fallback general
+    return 'Ocurrió un error de autenticación. Intenta nuevamente.';
   }
 }

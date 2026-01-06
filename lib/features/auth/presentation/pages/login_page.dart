@@ -67,15 +67,15 @@ class _LoginPageState extends State<LoginPage> {
             isLoading: isLoading,
             child: SafeArea(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0, vertical: 0.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 0.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height:20),
+                      const SizedBox(height: 20),
                       // Pet Adopt Logo/Icon
                       Center(
                         child: Container(

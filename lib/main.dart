@@ -32,15 +32,11 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         home: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
-            if (state is AuthLoading || state is AuthInitial) {
-              return const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            } else if (state is AuthAuthenticated) {
+            if (state is AuthAuthenticated) {
               return WelcomePage(user: state.user);
             } else {
+              // Valid cases: AuthInitial, AuthLoading, AuthError, AuthUnauthenticated
+              // LoginPage handles loading state internally via LoadingOverlay
               return const LoginPage();
             }
           },
