@@ -10,6 +10,7 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
   final PetsRepository repository;
 
   PetsBloc(this.repository) : super(PetsInitial()) {
+    // Manejo de eventos
     on<PetsLoadRequested>(_onLoadRequested);
     on<PetCreateRequested>(_onCreateRequested);
     on<PetUpdateRequested>(_onUpdateRequested);

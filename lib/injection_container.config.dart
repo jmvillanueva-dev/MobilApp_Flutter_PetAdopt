@@ -34,8 +34,10 @@ import 'package:app_petadopt/features/pets/data/repositories/pets_repository_imp
     as _i812;
 import 'package:app_petadopt/features/pets/domain/repositories/pets_repository.dart'
     as _i148;
+import 'package:app_petadopt/features/pets/presentation/bloc/discovery/discovery_bloc.dart'
+    as _i234;
 import 'package:app_petadopt/features/pets/presentation/bloc/pets_bloc.dart'
-    as _i189;
+    as _i900;
 import 'package:app_petadopt/features/profile/data/datasources/profile_remote_data_source.dart'
     as _i286;
 import 'package:app_petadopt/features/profile/data/datasources/profile_remote_data_source_impl.dart'
@@ -64,6 +66,8 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i725.NetworkInfo>(
         () => _i725.NetworkInfoImpl(gh<_i895.Connectivity>()));
+    gh.factory<_i900.PetsBloc>(
+        () => _i900.PetsBloc(gh<_i148.PetsRepository>()));
     gh.lazySingleton<_i286.ProfileRemoteDataSource>(
         () => _i367.ProfileRemoteDataSourceImpl(gh<_i454.SupabaseClient>()));
     gh.lazySingleton<_i961.AuthRemoteDataSource>(
@@ -89,8 +93,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i449.SignIn>(() => _i449.SignIn(gh<_i738.AuthRepository>()));
     gh.factory<_i157.SignOut>(() => _i157.SignOut(gh<_i738.AuthRepository>()));
     gh.factory<_i508.SignUp>(() => _i508.SignUp(gh<_i738.AuthRepository>()));
-    gh.factory<_i189.PetsBloc>(
-        () => _i189.PetsBloc(gh<_i148.PetsRepository>()));
+    gh.factory<_i234.DiscoveryBloc>(
+        () => _i234.DiscoveryBloc(gh<_i148.PetsRepository>()));
     gh.factory<_i988.AuthBloc>(() => _i988.AuthBloc(
           signIn: gh<_i449.SignIn>(),
           signUp: gh<_i508.SignUp>(),

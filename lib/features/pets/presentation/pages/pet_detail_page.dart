@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/pet_entity.dart';
 import '../../domain/entities/pet_photo_entity.dart';
 import '../../domain/repositories/pets_repository.dart';
@@ -82,6 +83,8 @@ class _PetDetailPageState extends State<PetDetailPage> {
         }
 
         final pet = petSnapshot.data!;
+        final currentUser = Supabase.instance.client.auth.currentUser;
+        final isOwner = currentUser?.id == pet.shelterId;
 
         return Scaffold(
           appBar: AppBar(
@@ -90,28 +93,31 @@ class _PetDetailPageState extends State<PetDetailPage> {
             backgroundColor: colorScheme.surface,
             foregroundColor: colorScheme.onSurface,
             elevation: 0,
-            actions: [
-              IconButton(
-                icon: Icon(Icons.edit, color: colorScheme.primary),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<PetsBloc>(),
-                        child: PetFormPage(
-                          shelterId: pet.shelterId,
-                          petToEdit: pet,
-                        ),
-                      ),
+            actions: isOwner
+                ? [
+                    IconButton(
+                      icon: Icon(Icons.edit, color: colorScheme.primary),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: context.read<PetsBloc>(),
+                              child: PetFormPage(
+                                shelterId: pet.shelterId,
+                                petToEdit: pet,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.delete, color: colorScheme.error),
-                onPressed: () => _showDeleteConfirmation(context, pet.name),
-              ),
-            ],
+                    IconButton(
+                      icon: Icon(Icons.delete, color: colorScheme.error),
+                      onPressed: () =>
+                          _showDeleteConfirmation(context, pet.name),
+                    ),
+                  ]
+                : [],
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -340,6 +346,38 @@ class _PetDetailPageState extends State<PetDetailPage> {
                   ),
                 ),
                 const SizedBox(height: 32),
+                if (!isOwner && pet.status == 'disponible') ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // TODO: Implementar en Fase 3
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Solicitar Adopción: Próximamente en Fase 3'),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
+                      ),
+                      child: const Text(
+                        'Solicitar Adopción 🐾',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
               ],
             ),
           ),
