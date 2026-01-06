@@ -10,7 +10,7 @@ import 'features/auth/presentation/bloc/auth_state.dart';
 import 'features/auth/presentation/pages/email_verified_page.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/auth/presentation/pages/password_reset_success_page.dart';
-import 'features/auth/presentation/pages/welcome_page.dart';
+import 'features/home/presentation/pages/home_page.dart';
 import 'injection_container.dart';
 
 // Global navigator key to access navigation context from anywhere
@@ -88,7 +88,7 @@ class _MyAppState extends State<MyApp> {
             BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
                 if (state is AuthAuthenticated) {
-                  return WelcomePage(user: state.user);
+                  return HomePage(user: state.user);
                 } else {
                   return const LoginPage();
                 }
