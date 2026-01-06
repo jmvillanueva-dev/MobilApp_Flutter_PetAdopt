@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/services/notification_service.dart';
 import '../../domain/repositories/adoption_repository.dart';
 import 'adoption_event.dart';
 import 'adoption_state.dart';
@@ -9,9 +10,17 @@ import 'adoption_state.dart';
 class AdoptionBloc extends Bloc<AdoptionEvent, AdoptionState> {
   final AdoptionRepository repository;
   final SupabaseClient supabaseClient;
+  final NotificationService notificationService;
 
-  AdoptionBloc(this.repository, this.supabaseClient)
-      : super(AdoptionInitial()) {
+  // Track previous requests to detect new ones
+  List<String> _previousAdopterRequestIds = [];
+  List<String> _previousShelterRequestIds = [];
+
+  AdoptionBloc(
+    this.repository,
+    this.supabaseClient,
+    this.notificationService,
+  ) : super(AdoptionInitial()) {
     on<CreateAdoptonRequest>(_onCreateRequest);
     on<LoadAdopterRequests>(_onLoadAdopterRequests);
     on<LoadShelterRequests>(_onLoadShelterRequests);
@@ -61,7 +70,24 @@ class AdoptionBloc extends Bloc<AdoptionEvent, AdoptionState> {
 
     await emit.forEach(
       repository.watchRequestsByAdopter(userId),
-      onData: (requests) => AdoptionLoaded(requests),
+      onData: (requests) {
+        // Check for status changes and notify
+        for (final request in requests) {
+          final wasTracked = _previousAdopterRequestIds.contains(request.id);
+          if (wasTracked && request.status != 'pendiente') {
+            // Status changed from pending to approved/rejected
+            notificationService.showStatusChangeNotification(
+              petName: request.petName ?? 'mascota',
+              status: request.status,
+            );
+          }
+        }
+
+        // Update tracked IDs
+        _previousAdopterRequestIds = requests.map((r) => r.id).toList();
+
+        return AdoptionLoaded(requests);
+      },
       onError: (error, stackTrace) => AdoptionError(error.toString()),
     );
   }
@@ -80,7 +106,24 @@ class AdoptionBloc extends Bloc<AdoptionEvent, AdoptionState> {
 
     await emit.forEach(
       repository.watchRequestsByShelter(userId),
-      onData: (requests) => AdoptionLoaded(requests),
+      onData: (requests) {
+        // Check for new requests and notify
+        for (final request in requests) {
+          final isNew = !_previousShelterRequestIds.contains(request.id);
+          if (isNew && request.status == 'pendiente') {
+            // New pending request received
+            notificationService.showNewRequestNotification(
+              petName: request.petName ?? 'mascota',
+              adopterName: request.adopterNamr ?? 'Usuario',
+            );
+          }
+        }
+
+        // Update tracked IDs
+        _previousShelterRequestIds = requests.map((r) => r.id).toList();
+
+        return AdoptionLoaded(requests);
+      },
       onError: (error, stackTrace) => AdoptionError(error.toString()),
     );
   }

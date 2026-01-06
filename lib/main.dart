@@ -3,6 +3,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'core/services/notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
@@ -22,7 +23,12 @@ void main() async {
   // Load environment variables
   await dotenv.load(fileName: '.env');
 
+  // Configure dependency injection
   await configureDependencies();
+
+  // Initialize notification service
+  await getIt<NotificationService>().initialize();
+
   runApp(const MyApp());
 }
 

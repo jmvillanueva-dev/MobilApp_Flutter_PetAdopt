@@ -10,6 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:app_petadopt/core/network/network_info.dart' as _i725;
+import 'package:app_petadopt/core/services/notification_service.dart' as _i17;
 import 'package:app_petadopt/features/adoption/data/datasources/adoption_remote_data_source.dart'
     as _i50;
 import 'package:app_petadopt/features/adoption/data/repositories/adoption_repository_impl.dart'
@@ -45,7 +46,7 @@ import 'package:app_petadopt/features/pets/domain/repositories/pets_repository.d
 import 'package:app_petadopt/features/pets/presentation/bloc/discovery/discovery_bloc.dart'
     as _i234;
 import 'package:app_petadopt/features/pets/presentation/bloc/pets_bloc.dart'
-    as _i900;
+    as _i189;
 import 'package:app_petadopt/features/profile/data/datasources/profile_remote_data_source.dart'
     as _i286;
 import 'package:app_petadopt/features/profile/data/datasources/profile_remote_data_source_impl.dart'
@@ -74,16 +75,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i725.NetworkInfo>(
         () => _i725.NetworkInfoImpl(gh<_i895.Connectivity>()));
-    gh.factory<_i900.PetsBloc>(
-        () => _i900.PetsBloc(gh<_i148.PetsRepository>()));
     gh.lazySingleton<_i286.ProfileRemoteDataSource>(
         () => _i367.ProfileRemoteDataSourceImpl(gh<_i454.SupabaseClient>()));
     gh.lazySingleton<_i961.AuthRemoteDataSource>(
         () => _i961.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()));
-    gh.factory<_i177.PetsRemoteDataSource>(
-        () => _i177.PetsRemoteDataSource(gh<_i454.SupabaseClient>()));
     gh.factory<_i50.AdoptionRemoteDataSource>(
         () => _i50.AdoptionRemoteDataSource(gh<_i454.SupabaseClient>()));
+    gh.factory<_i177.PetsRemoteDataSource>(
+        () => _i177.PetsRemoteDataSource(gh<_i454.SupabaseClient>()));
     gh.lazySingleton<_i360.ProfileRepository>(
         () => _i256.ProfileRepositoryImpl(gh<_i286.ProfileRemoteDataSource>()));
     gh.factory<_i23.ProfileBloc>(
@@ -110,9 +109,12 @@ extension GetItInjectableX on _i174.GetIt {
             ));
     gh.factory<_i234.DiscoveryBloc>(
         () => _i234.DiscoveryBloc(gh<_i148.PetsRepository>()));
+    gh.factory<_i189.PetsBloc>(
+        () => _i189.PetsBloc(gh<_i148.PetsRepository>()));
     gh.factory<_i44.AdoptionBloc>(() => _i44.AdoptionBloc(
           gh<_i385.AdoptionRepository>(),
           gh<_i454.SupabaseClient>(),
+          gh<_i17.NotificationService>(),
         ));
     gh.factory<_i988.AuthBloc>(() => _i988.AuthBloc(
           signIn: gh<_i449.SignIn>(),
