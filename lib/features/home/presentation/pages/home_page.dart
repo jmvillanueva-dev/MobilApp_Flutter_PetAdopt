@@ -36,7 +36,10 @@ class _HomePageState extends State<HomePage> {
             const ProfilePage(),
           ]
         : [
-            ShelterHomePage(user: widget.user), // Inicio Refugio
+            ShelterHomePage(
+              user: widget.user,
+              onTabChange: (index) => setState(() => _currentIndex = index),
+            ),
             BlocProvider(
               create: (_) =>
                   getIt<PetsBloc>()..add(PetsLoadRequested(widget.user.id)),

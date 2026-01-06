@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../features/pets/presentation/bloc/pets_bloc.dart';
 import '../../../../features/pets/presentation/bloc/pets_state.dart';
-import '../../../../features/pets/presentation/pages/pets_list_page.dart';
 import '../../../adoption/presentation/bloc/adoption_bloc.dart';
 import '../../../adoption/presentation/bloc/adoption_event.dart';
 import '../../../adoption/presentation/bloc/adoption_state.dart';
@@ -14,8 +13,13 @@ import '../../../pets/presentation/bloc/pets_event.dart';
 
 class ShelterHomePage extends StatefulWidget {
   final UserEntity user;
+  final Function(int)? onTabChange;
 
-  const ShelterHomePage({super.key, required this.user});
+  const ShelterHomePage({
+    super.key,
+    required this.user,
+    this.onTabChange,
+  });
 
   @override
   State<ShelterHomePage> createState() => _ShelterHomePageState();
@@ -35,14 +39,22 @@ class _ShelterHomePageState extends State<ShelterHomePage> {
           create: (_) => GetIt.I<AdoptionBloc>()..add(LoadShelterRequests()),
         ),
       ],
-      child: _ShelterDashboard(user: widget.user),
+      child: _ShelterDashboard(
+        user: widget.user,
+        onTabChange: widget.onTabChange,
+      ),
     );
   }
 }
 
 class _ShelterDashboard extends StatelessWidget {
   final UserEntity user;
-  const _ShelterDashboard({required this.user});
+  final Function(int)? onTabChange;
+
+  const _ShelterDashboard({
+    required this.user,
+    this.onTabChange,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -117,16 +129,11 @@ class _ShelterDashboard extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     onPressed: () {
-                      // Navegar a agregar mascota
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PetsListPage(user: user),
-                        ),
-                      );
+                      // Cambiar a la pestaña de Mascotas (índice 1 para refugios)
+                      onTabChange?.call(1);
                     },
-                    icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Gestionar'),
+                    icon: const Icon(Icons.pets, size: 18),
+                    label: const Text('Ver Mascotas'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00BFA5),
                       foregroundColor: Colors.white,
@@ -201,60 +208,60 @@ class _ShelterDashboard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Row(
-          children: [
-            Expanded(
-              child: BlocBuilder<PetsBloc, PetsState>(
-                builder: (context, state) {
-                  int count = 0;
-                  if (state is PetsLoaded) count = state.pets.length;
-                  return _StatCard(
-                    count: count.toString(),
-                    label: 'Mascotas',
-                    color: const Color(0xFF00C853), // Greenish
-                  );
-                },
-              ),
+        children: [
+          Expanded(
+            child: BlocBuilder<PetsBloc, PetsState>(
+              builder: (context, state) {
+                int count = 0;
+                if (state is PetsLoaded) count = state.pets.length;
+                return _StatCard(
+                  count: count.toString(),
+                  label: 'Mascotas',
+                  color: const Color(0xFF00C853), // Greenish
+                );
+              },
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: BlocBuilder<AdoptionBloc, AdoptionState>(
-                builder: (context, state) {
-                  int count = 0;
-                  if (state is AdoptionLoaded) {
-                    count = state.requests
-                        .where((r) => r.status == 'pendiente')
-                        .length;
-                  }
-                  return _StatCard(
-                    count: count.toString(),
-                    label: 'Pendientes',
-                    color: const Color(0xFFFFAB40), // Orange
-                  );
-                },
-              ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: BlocBuilder<AdoptionBloc, AdoptionState>(
+              builder: (context, state) {
+                int count = 0;
+                if (state is AdoptionLoaded) {
+                  count = state.requests
+                      .where((r) => r.status == 'pendiente')
+                      .length;
+                }
+                return _StatCard(
+                  count: count.toString(),
+                  label: 'Pendientes',
+                  color: const Color(0xFFFFAB40), // Orange
+                );
+              },
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: BlocBuilder<AdoptionBloc, AdoptionState>(
-                builder: (context, state) {
-                  int count = 0;
-                  if (state is AdoptionLoaded) {
-                    count = state.requests
-                        .where((r) => r.status == 'aprobada')
-                        .length;
-                  }
-                  // Nota: Idealmente contaríamos adopciones históricas, aquí filtramos solicitudes aprobadas recientes
-                  return _StatCard(
-                    count: count.toString(),
-                    label: 'Adoptadas',
-                    color: const Color(0xFF29B6F6), // Blue
-                  );
-                },
-              ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: BlocBuilder<AdoptionBloc, AdoptionState>(
+              builder: (context, state) {
+                int count = 0;
+                if (state is AdoptionLoaded) {
+                  count = state.requests
+                      .where((r) => r.status == 'aprobada')
+                      .length;
+                }
+                // Nota: Idealmente contaríamos adopciones históricas, aquí filtramos solicitudes aprobadas recientes
+                return _StatCard(
+                  count: count.toString(),
+                  label: 'Adoptadas',
+                  color: const Color(0xFF29B6F6), // Blue
+                );
+              },
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildRecentRequestsList() {
