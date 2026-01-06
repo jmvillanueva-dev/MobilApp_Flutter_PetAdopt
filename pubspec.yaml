@@ -70,6 +70,11 @@ dependencies:
   # Local Notifications
   flutter_local_notifications: ^19.5.0
 
+  # Map & Location
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  geolocator: ^13.0.1
+
   # Deep Linking
   app_links: ^6.3.3
   url_launcher: ^6.3.1
