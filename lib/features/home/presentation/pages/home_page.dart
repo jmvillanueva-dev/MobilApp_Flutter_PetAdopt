@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../features/auth/domain/entities/user_entity.dart';
-import '../../../profile/presentation/pages/profile_page.dart';
+import 'package:get_it/get_it.dart';
+import '../../../adoption/presentation/pages/adoption_requests_page.dart';
+import '../../../auth/domain/entities/user_entity.dart';
 import '../../../chat/presentation/pages/chat_page.dart';
-import '../../../pets/presentation/pages/pets_list_page.dart';
+import '../../../map/presentation/pages/shelter_map_page.dart';
 import '../../../pets/presentation/bloc/pets_bloc.dart';
 import '../../../pets/presentation/bloc/pets_event.dart';
 import '../../../pets/presentation/pages/pet_discovery_page.dart';
-import '../../../adoption/presentation/pages/adoption_requests_page.dart';
-import 'shelter_home_page.dart';
+import '../../../pets/presentation/pages/pets_list_page.dart';
+import '../../../profile/presentation/pages/profile_page.dart';
 import '../../../../injection_container.dart';
+import 'shelter_home_page.dart';
 
 class HomePage extends StatefulWidget {
   final UserEntity user;
@@ -48,8 +50,8 @@ class _HomePageState extends State<HomePage> {
     final List<Widget> pages = isAdoptante
         ? [
             const PetDiscoveryPage(),
-            const Center(child: Text('Mapa (Próximamente)')),
-            const ChatPageProvider(), // Chat IA
+            const ShelterMapPage(), // Mapa de refugios
+            const ChatPage(), // Chat IA
             const AdoptionRequestsPage(),
             const ProfilePage(),
           ]
