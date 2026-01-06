@@ -79,21 +79,31 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<AuthBloc>()..add(const AuthCheckRequested()),
-      child: MaterialApp(
-        navigatorKey: navigatorKey,
-        title: 'Pet Adopt',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        home: _deepLinkTarget ??
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                if (state is AuthAuthenticated) {
-                  return HomePage(user: state.user);
-                } else {
-                  return const LoginPage();
-                }
-              },
-            ),
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthUnauthenticated) {
+            navigatorKey.currentState?.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const LoginPage()),
+              (route) => false,
+            );
+          }
+        },
+        child: MaterialApp(
+          navigatorKey: navigatorKey,
+          title: 'Pet Adopt',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          home: _deepLinkTarget ??
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  if (state is AuthAuthenticated) {
+                    return HomePage(user: state.user);
+                  } else {
+                    return const LoginPage();
+                  }
+                },
+              ),
+        ),
       ),
     );
   }

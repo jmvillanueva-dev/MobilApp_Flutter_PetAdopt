@@ -33,6 +33,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final result = await _repository.updateProfile(
       event.userId,
       displayName: event.displayName,
+      phoneNumber: event.phoneNumber,
+      address: event.address,
     );
     result.fold(
       (error) => emit(ProfileError(error)),

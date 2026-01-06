@@ -9,6 +9,8 @@ class UserModel extends UserEntity {
     super.photoUrl,
     super.role,
     super.createdAt,
+    super.phoneNumber,
+    super.address,
   });
 
   factory UserModel.fromSupabaseUser(User user) {
@@ -19,6 +21,9 @@ class UserModel extends UserEntity {
       photoUrl: user.userMetadata?['avatar_url'] as String?,
       role: user.userMetadata?['role'] as String?,
       createdAt: DateTime.parse(user.createdAt),
+      // Assuming these might be in metadata if synced, otherwise null
+      phoneNumber: user.userMetadata?['phone_number'] as String?,
+      address: user.userMetadata?['address'] as String?,
     );
   }
 
@@ -30,6 +35,8 @@ class UserModel extends UserEntity {
       photoUrl: photoUrl,
       role: role,
       createdAt: createdAt,
+      phoneNumber: phoneNumber,
+      address: address,
     );
   }
 }

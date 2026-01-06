@@ -121,7 +121,20 @@ class _ProfileView extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: 24),
+
+                // Info Section
+                if (user.email.isNotEmpty)
+                  _ProfileInfoItem(
+                      icon: Icons.email_outlined, text: user.email),
+                if (user.phoneNumber != null && user.phoneNumber!.isNotEmpty)
+                  _ProfileInfoItem(
+                      icon: Icons.phone_outlined, text: user.phoneNumber!),
+                if (user.address != null && user.address!.isNotEmpty)
+                  _ProfileInfoItem(
+                      icon: Icons.location_on_outlined, text: user.address!),
+
+                const SizedBox(height: 32),
 
                 // Settings List
                 _ProfileOption(
@@ -132,11 +145,13 @@ class _ProfileView extends StatelessWidget {
                       context: context,
                       builder: (_) => EditProfileDialog(
                         user: user,
-                        onSave: (newName) {
+                        onSave: (newName, newPhone, newAddress) {
                           context.read<ProfileBloc>().add(
                                 ProfileUpdateRequested(
                                   userId: user.id,
                                   displayName: newName,
+                                  phoneNumber: newPhone,
+                                  address: newAddress,
                                 ),
                               );
                         },
@@ -163,6 +178,34 @@ class _ProfileView extends StatelessWidget {
         }
         return const SizedBox.shrink();
       },
+    );
+  }
+}
+
+class _ProfileInfoItem extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _ProfileInfoItem({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: Colors.grey),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.grey, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -14,10 +14,14 @@ class ProfileLoadRequested extends ProfileEvent {
 
 class ProfileUpdateRequested extends ProfileEvent {
   final String userId;
-  final String displayName;
+  final String? displayName;
+  final String? phoneNumber;
+  final String? address;
 
   const ProfileUpdateRequested({
     required this.userId,
-    required this.displayName,
+    this.displayName,
+    this.phoneNumber,
+    this.address,
   });
 }

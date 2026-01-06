@@ -21,11 +21,17 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Either<String, UserEntity>> updateProfile(String userId,
-      {String? displayName}) async {
+  Future<Either<String, UserEntity>> updateProfile(
+    String userId, {
+    String? displayName,
+    String? phoneNumber,
+    String? address,
+  }) async {
     try {
       final data = <String, dynamic>{};
       if (displayName != null) data['display_name'] = displayName;
+      if (phoneNumber != null) data['phone_number'] = phoneNumber;
+      if (address != null) data['address'] = address;
 
       final user = await remoteDataSource.updateProfile(userId, data);
       return Right(user.toEntity());

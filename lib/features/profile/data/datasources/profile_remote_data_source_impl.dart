@@ -40,6 +40,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         role: profileResponse['role'],
         createdAt:
             DateTime.parse(profileResponse['updated_at'] ?? user.createdAt),
+        phoneNumber: profileResponse['phone_number'],
+        address: profileResponse['address'],
       );
     } catch (e) {
       throw Exception('Error fetching profile: $e');
@@ -51,21 +53,18 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       String userId, Map<String, dynamic> data) async {
     try {
       // Update 'profiles' table
-      final response = await supabaseClient
-          .from('profiles')
-          .update(data)
-          .eq('id', userId)
-          .select()
-          .single();
+      // We don't use select().single() here to avoid PGRST116 if the update
+      // doesn't return the row immediately for some reason (e.g. RLS).
+      await supabaseClient.from('profiles').update(data).eq('id', userId);
 
-      // Also update Auth metadata to keep them in sync (optional but recommended)
+      // Also update Auth metadata to keep them in sync
       await supabaseClient.auth.updateUser(
         UserAttributes(
           data: data,
         ),
       );
 
-      // Re-fetch or construct updated model
+      // Re-fetch the updated profile to return fresh data
       return await getProfile(userId);
     } catch (e) {
       throw Exception('Error updating profile: $e');
