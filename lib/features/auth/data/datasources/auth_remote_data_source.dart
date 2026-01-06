@@ -71,6 +71,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw AuthException('No se pudo crear la cuenta');
       }
 
+      // Supabase devuelve identidades vacías si el usuario ya existe y la confirmación de email está habilitada
+      if (response.user!.identities != null &&
+          response.user!.identities!.isEmpty) {
+        throw AuthException('User already registered');
+      }
+
       return UserModel.fromSupabaseUser(response.user!);
     } on AuthException {
       rethrow;
