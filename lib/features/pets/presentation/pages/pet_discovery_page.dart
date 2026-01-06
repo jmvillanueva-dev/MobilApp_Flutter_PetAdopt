@@ -4,6 +4,8 @@ import 'package:get_it/get_it.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/pet_entity.dart';
 import '../bloc/discovery/discovery_bloc.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../../profile/presentation/bloc/profile_state.dart';
 import 'pet_detail_page.dart';
 
 class PetDiscoveryPage extends StatelessWidget {
@@ -94,10 +96,20 @@ class _PetDiscoveryViewState extends State<_PetDiscoveryView> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Hola, Adoptante 👋',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600], fontWeight: FontWeight.bold),
+              BlocBuilder<ProfileBloc, ProfileState>(
+                builder: (context, state) {
+                  String displayName = 'Adoptante';
+                  if (state is ProfileLoaded) {
+                    displayName = state.user.displayName ?? 'Adoptante';
+                    if (displayName.isEmpty) displayName = 'Adoptante';
+                  }
+                  // Optionally separate first name if needed, but display name is fine
+                  return Text(
+                    'Hola, $displayName 👋',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[600], fontWeight: FontWeight.bold),
+                  );
+                },
               ),
               const SizedBox(height: 4),
               Text(
@@ -109,27 +121,6 @@ class _PetDiscoveryViewState extends State<_PetDiscoveryView> {
               ),
             ],
           ),
-          Stack(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.notifications_outlined, size: 28),
-              ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Text('2',
-                      style: TextStyle(color: Colors.white, fontSize: 10)),
-                ),
-              )
-            ],
-          )
         ],
       ),
     );

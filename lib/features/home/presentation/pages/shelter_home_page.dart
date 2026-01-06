@@ -9,6 +9,8 @@ import '../../../adoption/presentation/bloc/adoption_event.dart';
 import '../../../adoption/presentation/bloc/adoption_state.dart';
 import '../../../adoption/presentation/pages/adoption_requests_page.dart';
 import '../../../auth/domain/entities/user_entity.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../../profile/presentation/bloc/profile_state.dart';
 
 class ShelterHomePage extends StatefulWidget {
   final UserEntity user;
@@ -169,13 +171,23 @@ class _ShelterDashboard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  user.displayName ?? 'Refugio',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                BlocBuilder<ProfileBloc, ProfileState>(
+                  builder: (context, state) {
+                    String displayName = user.displayName ?? 'Refugio';
+                    if (state is ProfileLoaded) {
+                      displayName = state.user.displayName ?? displayName;
+                    }
+                    if (displayName.isEmpty) displayName = 'Refugio';
+
+                    return Text(
+                      displayName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
                 ),
                 const Text(
                   'Panel de administración',

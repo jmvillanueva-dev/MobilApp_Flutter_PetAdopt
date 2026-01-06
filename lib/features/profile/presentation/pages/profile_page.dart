@@ -15,23 +15,11 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // We need to fetch the current user ID to load the profile
-    final authState = context.read<AuthBloc>().state;
-    String? userId;
-    if (authState is AuthAuthenticated) {
-      // Assuming AuthAuthenticated exposes user or userId
-      userId = authState.user.id;
-    }
-
-    return BlocProvider(
-      create: (_) => getIt<ProfileBloc>()..add(ProfileLoadRequested(userId!)),
-      child: Scaffold(
-        backgroundColor: AppTheme.backgroundColor,
-        body: SafeArea(
-          child: userId == null
-              ? const Center(child: Text('Usuario no autenticado'))
-              : _ProfileView(),
-        ),
+    // UserId is now managed by the provided ProfileBloc, which was initialized in HomePage
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
+      body: SafeArea(
+        child: _ProfileView(),
       ),
     );
   }

@@ -12,6 +12,9 @@ import '../../../profile/presentation/pages/profile_page.dart';
 import '../../../../injection_container.dart';
 import 'shelter_home_page.dart';
 
+import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../../profile/presentation/bloc/profile_event.dart';
+
 class HomePage extends StatefulWidget {
   final UserEntity user;
   const HomePage({super.key, required this.user});
@@ -23,10 +26,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   late final PetsBloc _petsBloc;
+  late final ProfileBloc _profileBloc;
 
   @override
   void initState() {
     super.initState();
+    // Initialize ProfileBloc for all users
+    _profileBloc = getIt<ProfileBloc>()
+      ..add(ProfileLoadRequested(widget.user.id));
+
     // Create PetsBloc only for shelter users
     if (widget.user.role == 'refugio') {
       _petsBloc = getIt<PetsBloc>()..add(PetsLoadRequested(widget.user.id));
@@ -35,6 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    _profileBloc.close();
     if (widget.user.role == 'refugio') {
       _petsBloc.close();
     }
@@ -112,34 +121,37 @@ class _HomePageState extends State<HomePage> {
                 label: 'Perfil'),
           ];
 
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: pages,
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
+    return BlocProvider.value(
+      value: _profileBloc,
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: pages,
         ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
-          items: items,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: Theme.of(context).primaryColor,
-          unselectedItemColor: Colors.grey,
-          showUnselectedLabels: true,
-          selectedLabelStyle:
-              const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontSize: 12),
-          elevation: 0,
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) => setState(() => _currentIndex = index),
+            items: items,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
+            selectedItemColor: Theme.of(context).primaryColor,
+            unselectedItemColor: Colors.grey,
+            showUnselectedLabels: true,
+            selectedLabelStyle:
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            unselectedLabelStyle: const TextStyle(fontSize: 12),
+            elevation: 0,
+          ),
         ),
       ),
     );
