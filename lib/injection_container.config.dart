@@ -28,6 +28,14 @@ import 'package:app_petadopt/features/auth/domain/usecases/sign_up.dart'
     as _i508;
 import 'package:app_petadopt/features/auth/presentation/bloc/auth_bloc.dart'
     as _i988;
+import 'package:app_petadopt/features/pets/data/datasources/pets_remote_data_source.dart'
+    as _i177;
+import 'package:app_petadopt/features/pets/data/repositories/pets_repository_impl.dart'
+    as _i812;
+import 'package:app_petadopt/features/pets/domain/repositories/pets_repository.dart'
+    as _i148;
+import 'package:app_petadopt/features/pets/presentation/bloc/pets_bloc.dart'
+    as _i189;
 import 'package:app_petadopt/features/profile/data/datasources/profile_remote_data_source.dart'
     as _i286;
 import 'package:app_petadopt/features/profile/data/datasources/profile_remote_data_source_impl.dart'
@@ -60,10 +68,16 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i367.ProfileRemoteDataSourceImpl(gh<_i454.SupabaseClient>()));
     gh.lazySingleton<_i961.AuthRemoteDataSource>(
         () => _i961.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()));
+    gh.factory<_i177.PetsRemoteDataSource>(
+        () => _i177.PetsRemoteDataSource(gh<_i454.SupabaseClient>()));
     gh.lazySingleton<_i360.ProfileRepository>(
         () => _i256.ProfileRepositoryImpl(gh<_i286.ProfileRemoteDataSource>()));
     gh.factory<_i23.ProfileBloc>(
         () => _i23.ProfileBloc(gh<_i360.ProfileRepository>()));
+    gh.lazySingleton<_i148.PetsRepository>(() => _i812.PetsRepositoryImpl(
+          remoteDataSource: gh<_i177.PetsRemoteDataSource>(),
+          networkInfo: gh<_i725.NetworkInfo>(),
+        ));
     gh.lazySingleton<_i738.AuthRepository>(() => _i770.AuthRepositoryImpl(
           remoteDataSource: gh<_i961.AuthRemoteDataSource>(),
           networkInfo: gh<_i725.NetworkInfo>(),
@@ -75,6 +89,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i449.SignIn>(() => _i449.SignIn(gh<_i738.AuthRepository>()));
     gh.factory<_i157.SignOut>(() => _i157.SignOut(gh<_i738.AuthRepository>()));
     gh.factory<_i508.SignUp>(() => _i508.SignUp(gh<_i738.AuthRepository>()));
+    gh.factory<_i189.PetsBloc>(
+        () => _i189.PetsBloc(gh<_i148.PetsRepository>()));
     gh.factory<_i988.AuthBloc>(() => _i988.AuthBloc(
           signIn: gh<_i449.SignIn>(),
           signUp: gh<_i508.SignUp>(),
