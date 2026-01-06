@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../features/auth/domain/entities/user_entity.dart';
 import '../../../profile/presentation/pages/profile_page.dart';
 import '../../../chat/presentation/pages/chat_page.dart';
+import '../../../pets/presentation/pages/pets_list_page.dart';
+import '../../../pets/presentation/bloc/pets_bloc.dart';
+import '../../../pets/presentation/bloc/pets_event.dart';
+import '../../../../injection_container.dart';
 
 class HomePage extends StatefulWidget {
   final UserEntity user;
@@ -29,7 +34,11 @@ class _HomePageState extends State<HomePage> {
           ]
         : [
             const Center(child: Text('Inicio Refugio (Próximamente)')),
-            const Center(child: Text('Mis Mascotas (Próximamente)')),
+            BlocProvider(
+              create: (_) =>
+                  getIt<PetsBloc>()..add(PetsLoadRequested(widget.user.id)),
+              child: PetsListPage(user: widget.user),
+            ),
             const Center(child: Text('Solicitudes (Próximamente)')),
             const ProfilePage(),
           ];
