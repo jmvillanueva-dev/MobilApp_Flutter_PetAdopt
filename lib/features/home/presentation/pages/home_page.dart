@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../features/auth/domain/entities/user_entity.dart';
 import '../../../profile/presentation/pages/profile_page.dart';
-// import '../widgets/home_content.dart'; // Placeholder
+import '../../../chat/presentation/pages/chat_page.dart';
 
 class HomePage extends StatefulWidget {
   final UserEntity user;
@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
         ? [
             const Center(child: Text('Inicio Adoptante (Próximamente)')),
             const Center(child: Text('Mapa (Próximamente)')),
-            const Center(child: Text('Chat IA (Próximamente)')),
+            const ChatPageProvider(), // Chat IA
             const Center(child: Text('Solicitudes (Próximamente)')),
             const ProfilePage(),
           ]
