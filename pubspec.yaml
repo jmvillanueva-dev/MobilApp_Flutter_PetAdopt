@@ -67,6 +67,9 @@ dependencies:
   # Network
   connectivity_plus: ^6.1.2
 
+  # Local Notifications
+  flutter_local_notifications: ^19.5.0
+
   # Deep Linking
   app_links: ^6.3.3
   url_launcher: ^6.3.1
