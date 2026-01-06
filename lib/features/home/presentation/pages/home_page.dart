@@ -7,6 +7,7 @@ import '../../../pets/presentation/pages/pets_list_page.dart';
 import '../../../pets/presentation/bloc/pets_bloc.dart';
 import '../../../pets/presentation/bloc/pets_event.dart';
 import '../../../pets/presentation/pages/pet_discovery_page.dart';
+import '../../../adoption/presentation/pages/adoption_requests_page.dart';
 import '../../../../injection_container.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
             const PetDiscoveryPage(),
             const Center(child: Text('Mapa (Próximamente)')),
             const ChatPageProvider(), // Chat IA
-            const Center(child: Text('Solicitudes (Próximamente)')),
+            const AdoptionRequestsPage(),
             const ProfilePage(),
           ]
         : [
@@ -40,7 +41,7 @@ class _HomePageState extends State<HomePage> {
                   getIt<PetsBloc>()..add(PetsLoadRequested(widget.user.id)),
               child: PetsListPage(user: widget.user),
             ),
-            const Center(child: Text('Solicitudes (Próximamente)')),
+            const AdoptionRequestsPage(),
             const ProfilePage(),
           ];
 

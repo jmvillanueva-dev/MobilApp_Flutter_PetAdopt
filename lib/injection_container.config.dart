@@ -10,6 +10,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:app_petadopt/core/network/network_info.dart' as _i725;
+import 'package:app_petadopt/features/adoption/data/datasources/adoption_remote_data_source.dart'
+    as _i50;
+import 'package:app_petadopt/features/adoption/data/repositories/adoption_repository_impl.dart'
+    as _i137;
+import 'package:app_petadopt/features/adoption/domain/repositories/adoption_repository.dart'
+    as _i385;
+import 'package:app_petadopt/features/adoption/presentation/bloc/adoption_bloc.dart'
+    as _i44;
 import 'package:app_petadopt/features/auth/data/datasources/auth_remote_data_source.dart'
     as _i961;
 import 'package:app_petadopt/features/auth/data/repositories/auth_repository_impl.dart'
@@ -74,6 +82,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i961.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()));
     gh.factory<_i177.PetsRemoteDataSource>(
         () => _i177.PetsRemoteDataSource(gh<_i454.SupabaseClient>()));
+    gh.factory<_i50.AdoptionRemoteDataSource>(
+        () => _i50.AdoptionRemoteDataSource(gh<_i454.SupabaseClient>()));
     gh.lazySingleton<_i360.ProfileRepository>(
         () => _i256.ProfileRepositoryImpl(gh<_i286.ProfileRemoteDataSource>()));
     gh.factory<_i23.ProfileBloc>(
@@ -93,8 +103,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i449.SignIn>(() => _i449.SignIn(gh<_i738.AuthRepository>()));
     gh.factory<_i157.SignOut>(() => _i157.SignOut(gh<_i738.AuthRepository>()));
     gh.factory<_i508.SignUp>(() => _i508.SignUp(gh<_i738.AuthRepository>()));
+    gh.lazySingleton<_i385.AdoptionRepository>(
+        () => _i137.AdoptionRepositoryImpl(
+              remoteDataSource: gh<_i50.AdoptionRemoteDataSource>(),
+              networkInfo: gh<_i725.NetworkInfo>(),
+            ));
     gh.factory<_i234.DiscoveryBloc>(
         () => _i234.DiscoveryBloc(gh<_i148.PetsRepository>()));
+    gh.factory<_i44.AdoptionBloc>(() => _i44.AdoptionBloc(
+          gh<_i385.AdoptionRepository>(),
+          gh<_i454.SupabaseClient>(),
+        ));
     gh.factory<_i988.AuthBloc>(() => _i988.AuthBloc(
           signIn: gh<_i449.SignIn>(),
           signUp: gh<_i508.SignUp>(),

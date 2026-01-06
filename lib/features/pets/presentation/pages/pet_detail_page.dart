@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../adoption/presentation/bloc/adoption_bloc.dart';
+import '../../../adoption/presentation/widgets/create_request_dialog.dart';
 import '../../domain/entities/pet_entity.dart';
 import '../../domain/entities/pet_photo_entity.dart';
 import '../../domain/repositories/pets_repository.dart';
@@ -353,11 +355,15 @@ class _PetDetailPageState extends State<PetDetailPage> {
                     height: 56,
                     child: ElevatedButton(
                       onPressed: () {
-                        // TODO: Implementar en Fase 3
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'Solicitar Adopción: Próximamente en Fase 3'),
+                        showDialog(
+                          context: context,
+                          builder: (_) => BlocProvider(
+                            create: (_) => getIt<AdoptionBloc>(),
+                            child: CreateAdoptionRequestDialog(
+                              petId: pet.id,
+                              petName: pet.name,
+                              shelterId: pet.shelterId,
+                            ),
                           ),
                         );
                       },
