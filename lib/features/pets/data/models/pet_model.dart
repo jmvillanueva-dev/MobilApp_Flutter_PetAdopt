@@ -7,6 +7,9 @@ class PetModel extends PetEntity {
   const PetModel({
     required super.id,
     required super.shelterId,
+    super.shelterName,
+    super.shelterPhone,
+    super.shelterAddress,
     required super.name,
     required super.species,
     super.breed,
@@ -32,6 +35,9 @@ class PetModel extends PetEntity {
     return PetModel(
       id: json['id'] as String,
       shelterId: json['shelter_id'] as String,
+      shelterName: json['profiles']?['display_name'] as String?,
+      shelterPhone: json['profiles']?['phone_number'] as String?,
+      shelterAddress: json['profiles']?['address'] as String?,
       name: json['name'] as String,
       species: json['species'] as String,
       breed: json['breed'] as String?,
@@ -84,6 +90,9 @@ class PetModel extends PetEntity {
     return PetEntity(
       id: id,
       shelterId: shelterId,
+      shelterName: shelterName,
+      shelterPhone: shelterPhone,
+      shelterAddress: shelterAddress,
       name: name,
       species: species,
       breed: breed,
@@ -110,6 +119,9 @@ class PetModel extends PetEntity {
     return PetModel(
       id: entity.id,
       shelterId: entity.shelterId,
+      shelterName: entity.shelterName,
+      shelterPhone: entity.shelterPhone,
+      shelterAddress: entity.shelterAddress,
       name: entity.name,
       species: entity.species,
       breed: entity.breed,

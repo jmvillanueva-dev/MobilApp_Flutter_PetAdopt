@@ -269,13 +269,33 @@ class PetsRemoteDataSource {
     }
   }
 
-  /// Escucha cambios en tiempo real de una mascota específica
+  /// Escucha cambios en tiempo real de una mascota específica.
+  ///
+  /// Retorna un Stream que emite actualizaciones cada vez que la mascota cambia.
   Stream<PetModel> watchPet(String petId) {
     return _supabaseClient
         .from('pets')
         .stream(primaryKey: ['id'])
         .eq('id', petId)
-        .map((data) => PetModel.fromJson(data.first));
+        .map((data) {
+          if (data.isEmpty) throw Exception('La mascota no existe');
+          final json = data.first as Map<String, dynamic>;
+
+          // Join con profiles para obtener info del refugio
+          final shelterData = _supabaseClient
+              .from('profiles')
+              .select('display_name, phone_number, address')
+              .eq('id', json['shelter_id'] as String)
+              .maybeSingle(); // Use maybeSingle to handle null results
+
+          return shelterData.then((profileJson) {
+            if (profileJson != null) {
+              json['profiles'] = profileJson;
+            }
+            return PetModel.fromJson(json);
+          });
+        })
+        .asyncMap((future) => future);
   }
 
   /// Escucha cambios en tiempo real de las fotos de una mascota

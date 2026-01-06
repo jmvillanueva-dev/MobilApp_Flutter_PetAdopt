@@ -239,15 +239,149 @@ class _PetDetailPageState extends State<PetDetailPage> {
                   },
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
+
+                // Nombre de la mascota con badge de disponibilidad
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            pet.name,
+                            style: textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+                          if (pet.breed != null) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              pet.breed!,
+                              style: textTheme.titleMedium?.copyWith(
+                                color: colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Badge de disponibilidad
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: pet.status == 'disponible'
+                            ? const Color(0xFF00C4B4)
+                            : pet.status == 'en_proceso'
+                                ? const Color(0xFFFF9800)
+                                : const Color(0xFF9E9E9E),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        pet.status == 'disponible'
+                            ? 'Disponible'
+                            : pet.status == 'en_proceso'
+                                ? 'En Proceso'
+                                : pet.status == 'adoptado'
+                                    ? 'Adoptado'
+                                    : 'Inactivo',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Card de información del refugio
+                if (!isOwner && pet.shelterName != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: colorScheme.outline.withOpacity(0.2),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.home,
+                            color: colorScheme.onPrimaryContainer,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                pet.shelterName!,
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (pet.shelterAddress != null) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  pet.shelterAddress!,
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color:
+                                        colorScheme.onSurface.withOpacity(0.6),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        if (pet.shelterPhone != null)
+                          IconButton(
+                            onPressed: () {
+                              // TODO: Implementar llamada telefónica
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                      Text('Teléfono: ${pet.shelterPhone}'),
+                                ),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.phone,
+                              color: colorScheme.primary,
+                            ),
+                            tooltip: 'Llamar al refugio',
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
 
                 // Información Detallada
                 _buildSectionTitle(context, 'Información'),
                 const SizedBox(height: 16),
-                _buildInfoRow(context, 'Nombre', pet.name),
-                _buildInfoRow(context, 'Especie', pet.species.toUpperCase()),
-                if (pet.breed != null)
-                  _buildInfoRow(context, 'Raza', pet.breed!),
                 _buildInfoRow(context, 'Edad', pet.ageDisplay),
                 if (pet.sex != null) _buildInfoRow(context, 'Sexo', pet.sex!),
                 if (pet.size != null)

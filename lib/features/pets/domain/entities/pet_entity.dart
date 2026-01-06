@@ -8,6 +8,11 @@ class PetEntity extends Equatable {
   final String id;
   final String shelterId;
 
+  // Información del refugio
+  final String? shelterName;
+  final String? shelterPhone;
+  final String? shelterAddress;
+
   // Información básica
   final String name;
   final String species; // 'perro' o 'gato'
@@ -41,6 +46,9 @@ class PetEntity extends Equatable {
   const PetEntity({
     required this.id,
     required this.shelterId,
+    this.shelterName,
+    this.shelterPhone,
+    this.shelterAddress,
     required this.name,
     required this.species,
     this.breed,
@@ -81,6 +89,9 @@ class PetEntity extends Equatable {
   List<Object?> get props => [
         id,
         shelterId,
+        shelterName,
+        shelterPhone,
+        shelterAddress,
         name,
         species,
         breed,
